@@ -9,10 +9,15 @@ This module provides envoy awesomeness.
 
 import os
 import sys
+'''split shell commends into correct tokens'''
 import shlex
+'''supportance of Linux Signals'''
 import signal
+'''actual subprocess module'''
 import subprocess
+'''create a thread to work, but why?'''
 import threading
+'''traceback exeception'''
 import traceback
 
 
@@ -85,18 +90,22 @@ class Command(object):
                 self.exc = exc
 
 
+        '''actually do the task(target)'''
         thread = threading.Thread(target=target)
         thread.start()
 
         thread.join(timeout)
         if self.exc:
+            '''got exception, raise it'''
             raise self.exc
         if _is_alive(thread) :
+            '''do not get exception but alive, timeout, terminate it'''
             _terminate_process(self.process)
             thread.join(kill_timeout)
             if _is_alive(thread):
                 _kill_process(self.process)
                 thread.join()
+        '''everything is okay, get ready to return'''
         self.returncode = self.process.returncode
         return self.out, self.err
 
@@ -120,6 +129,7 @@ class ConnectedCommand(object):
     def __exit__(self, type, value, traceback):
         self.kill()
 
+    '''no setter, means read only attrib.'''
     @property
     def status_code(self):
         """The status code of the process.
@@ -189,6 +199,7 @@ def expand_args(command):
             else:
                 break
 
+        '''map: map func to each element in iter'''
         command = list(map(shlex.split, command))
 
     return command
