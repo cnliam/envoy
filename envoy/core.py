@@ -123,6 +123,7 @@ class ConnectedCommand(object):
         self.std_err = std_out
         self._status_code = None
 
+    '''good guy! a class with __enter__ and __exit__ can be used with context manager (with ... as ...:)'''
     def __enter__(self):
         return self
 
